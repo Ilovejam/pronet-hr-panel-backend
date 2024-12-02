@@ -91,7 +91,7 @@ router.get("/:id", async (req, res) => {
         return res.status(404).json({ message: "Form bulunamadı." });
       }
   
-      const publicLink = `http://localhost:3001/applications/${id}`; // Port 3001 olarak ayarlandı
+      const publicLink = `https://pronet-hr-panel.vercel.app/applications/${id}`;
       res.status(200).json({ link: publicLink });
     } catch (error) {
       console.error(error);
