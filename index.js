@@ -8,15 +8,20 @@ const applicationRoutes = require("./routes/applications");
 const authRoutes = require("./routes/auth");
 const path = require("path");
 const fs = require("fs");
+const https = require("https");
+const http = require("http");
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const uploadDirs = ["./uploads", "./uploads/doc", "./uploads/video"];
-uploadDirs.forEach((dir) => {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-});
+const SSL_PORT = 443;
+
+// Self-signed sertifikayı yükleme
+const sslOptions = {
+  key: fs.readFileSync("ssl/selfsigned.key"),
+  cert: fs.readFileSync("ssl/selfsigned.crt"),
+};
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -34,7 +39,15 @@ app.use("/forms", formRoutes);
 app.use("/applications", applicationRoutes);
 app.use("/auth", authRoutes);
 
-// Sunucu Başlatma
-app.listen(PORT, () => {
-  console.log(`Server is running `);
+// HTTPS Sunucu Başlatma
+https.createServer(sslOptions, app).listen(SSL_PORT, () => {
+  console.log(`HTTPS Server is running on port ${SSL_PORT}`);
+});
+
+// HTTP Trafiği HTTPS'e Yönlendirme
+http.createServer((req, res) => {
+  res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
+  res.end();
+}).listen(PORT, () => {
+  console.log(`HTTP Server is redirecting traffic to HTTPS`);
 });
