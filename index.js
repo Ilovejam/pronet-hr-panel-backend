@@ -23,7 +23,15 @@ const sslOptions = {
   cert: fs.readFileSync("ssl/selfsigned.crt"),
 };
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:3000", // Yerel geliştirme için
+    "https://pronet-hr-panel.vercel.app" // Vercel adresi
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(bodyParser.json());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
