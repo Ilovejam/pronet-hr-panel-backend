@@ -9,6 +9,7 @@ const FormSchema = new mongoose.Schema(
         question: { type: String, required: true },
         type: { type: String, required: true }, // Text, Multiple Choice, Video, File, vs.
         options: [String], // Çoktan seçmeli seçenekler
+        value: mongoose.Schema.Types.Mixed, // Tarih veya dosya için opsiyonel değer
       },
     ],
   },
